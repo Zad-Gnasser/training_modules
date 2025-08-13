@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="signup_inherits.custom_fields" inherit_id="auth_signup.fields" name="Signup Inherits Custom Fields">
+        <xpath expr="//div[@class='mb-3 field-name']" position="after">
+            <div class="mb-3 field-mobile">
+                <label for="mobile">Your Mobile</label>
+                <input type="text" name="mobile" id="mobile" class="form-control form-control-sm"
+                       autofocus="autofocus"
+                       autocapitalize="off" required="required"
+                />
+            </div>
+        </xpath>
+    </template>
+</odoo>
+
