@@ -1,0 +1,130 @@
+<odoo>
+    <data>
+        <record id="purchase_requests_squ" model="ir.sequence">
+            <field name="name">Purchase Request</field>
+            <field name="code">purchase.requests</field>
+            <field name="prefix">PR</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+
+        <record id="view_purchase_request_tree" model="ir.ui.view">
+            <field name="name">purchase.request.tree</field>
+            <field name="model">purchase.requests</field>
+            <field name="arch" type="xml">
+                <list decoration-info="state == 'to be approved'">
+                    <field name="request_name" widget="text" readonly="state in ('approve','reject','cancel')"
+                           decoration-bf="True"/>
+                    <field name="request_by" readonly="state in ('approve','reject','cancel')"/>
+                    <field name="start_date" widget="date" class="d-block"
+                           readonly="state in ('approve','reject','cancel')"/>
+                    <field name="end_date" widget="date" class="d-block"
+                           readonly="state in ('approve','reject','cancel')"/>
+                    <field name="total" readonly="state in ('approve','reject','cancel')" sum="total"
+                           class="fw-bolder ms-auto flex-shrink-0" type="measure"/>
+                    <field name="state" widget="badge"
+                           decoration-success="state == 'approve'"
+                           decoration-info="state == 'to be approved'"
+                           decoration-danger="state == 'reject'"
+                           decoration-muted="state == 'cancel'"
+                    />
+                </list>
+            </field>
+        </record>
+        <record id="view_purchase_request_form" model="ir.ui.view">
+            <field name="model">purchase.requests</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="action_submit" type="object" string="Submit for Approval" class="btn-primary"
+                                invisible="state != 'draft'"
+                        />
+                        <button name="action_reject" type="object" string="Reject" class="btn-danger"
+                                invisible="state != 'to be approved'"
+                        />
+                        <button name="action_approve" type="object" string="Approve" class="btn-success"
+                                invisible="state != 'to be approved'"
+                        />
+                        <button name="action_cancel" type="object" string="Cancel" class="btn-secondary"
+                                invisible="state != 'draft'"
+                        />
+                        <button name="action_reset" type="object" string="Reset" class="btn-secondary"
+                                invisible="state not in ('cancel', 'to be approved')"
+                        />
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="to be approved,approve,reject,cancel"/>
+                    </header>
+                    <sheet>
+                        <widget name="web_ribbon" title="Reject"
+                                invisible="state != 'reject'" bg_color="text-bg-danger"/>
+                        <widget name="web_ribbon" title="Approve"
+                                invisible="state != 'approve'"/>
+                        <div class="oe_title">
+                            <lable for="request_name"/>
+                            <h1 style="font-size: 2.5rem; font-weight: bold;">
+                                <field name="request_name" placeholder="Request Name"/>
+                            </h1>
+                        </div>
+                        <group col="2">
+                            <group>
+                                <field name="request_by" readonly="state in ('approve','reject','cancel')"/>
+                                <field name="start_date" widget="date"
+                                       readonly="state in ('approve','reject','cancel')"/>
+                                <field name="end_date" widget="date" readonly="state in ('approve','reject','cancel')"/>
+                                <field name="rejection_reason" widget="text" invisible="state != 'reject'"
+                                       readonly="state in ('approve','reject','cancel')"/>
+                            </group>
+                            <group>
+                                <field name="notes" readonly="state in ('approve','reject','cancel')"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="order lines">
+                                <field name="order_line" context="{'default_request_id': id}"
+                                       readonly="state in ('approve','reject','cancel')">
+                                    <list editable="bottom">
+                                        <field name="product_id"/>
+                                        <field name="description"/>
+                                        <field name="quantity"/>
+                                        <field name="tax" widget="many2many_tags"
+                                               domain="[('type_tax_use', '=', 'purchase')]"/>
+                                        <field name="cost_price"/>
+                                        <field name="total"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                        <div class="d-flex flex-column align-items-end mt-3" style="gap: 6px;">
+                            <div>
+                                <span class="fw-bold">Subtotal : </span>
+                                <field name="price_subtotal" class="fw-bold"/>
+                            </div>
+                            <div>
+                                <span class="fw-bold">Tax : </span>
+                                <field name="price_tax" class="fw-bold"/>
+                            </div>
+                            <div>
+                                <span class="fw-bold">Total : </span>
+                                <field name="total_price" class="fw-bold"/>
+                            </div>
+                        </div>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+        <record id="purchase_request_action_approve_selected" model="ir.actions.server">
+            <field name="name">Approve Requests</field>
+            <field name="model_id" ref="model_purchase_requests"/>
+            <field name="state">code</field>
+            <field name="binding_model_id" ref="model_purchase_requests"/>
+            <field name="binding_type">action</field>
+            <field name="code">
+                action = records.action_approve_multi()
+            </field>
+        </record>
+
+
+    </data>
+</odoo>
