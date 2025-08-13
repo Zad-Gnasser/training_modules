@@ -1,0 +1,45 @@
+<odoo>
+    <data>
+
+
+        <record id="view_order_form_inherit_dimension" model="ir.ui.view">
+            <field name="name">sale.order.form.inherit.dimension</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_template_id']" position="after">
+                    <field name="dimension"/>
+                </xpath>
+
+            </field>
+        </record>
+         <record id="sale_order_debug_button_form_view" model="ir.ui.view">
+            <field name="name">sale.order.debug.button.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <button name="action_print_debug_values"
+                            string="Print Debug Values"
+                            type="object"
+                            class="btn-secondary"/>
+                </xpath>
+            </field>
+        </record>
+         <record id="sale_order_report_button_form_view" model="ir.ui.view">
+            <field name="name">sale.order.debug.button.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <button name="execl_report_button"
+                            string="excel report"
+                            type="object"
+                            class="btn-secondary"/>
+                </xpath>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>
